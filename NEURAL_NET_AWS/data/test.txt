@@ -1,0 +1,5 @@
+data/obj/img_18.png
+data/obj/img_46.png
+data/obj/img_58.png
+data/obj/img_80.png
+data/obj/img_94.png
