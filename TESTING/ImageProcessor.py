@@ -1,7 +1,5 @@
 import numpy as np
-from PIL import Image, ImageGrab  # type: ignore
 import cv2 as cv
-import os
 
 
 class ImageProcessor:
@@ -12,7 +10,12 @@ class ImageProcessor:
     colors = []
 
     def __init__(
-        self, objDir: str, img_size: tuple[int, int], cfg_file: str, weights_file: str
+        self,
+        objDir: str,
+        img_size: tuple[int, int],
+        cfg_file: str,
+        weights_file: str,
+        result_path: str,
     ):
         np.random.seed(42)
         self.net = cv.dnn.readNetFromDarknet(cfg_file, weights_file)
@@ -21,8 +24,7 @@ class ImageProcessor:
         self.ln = [self.ln[i - 1] for i in self.net.getUnconnectedOutLayers()]
         self.width: int = img_size[0]
         self.height: int = img_size[1]
-
-        print(f"{objDir}\\obj.names")
+        self.result_path = result_path
 
         with open(f"{objDir}\\obj.names", "r") as file:
             lines = file.readlines()
@@ -37,6 +39,24 @@ class ImageProcessor:
             (255, 255, 0),
             (255, 0, 255),
             (0, 255, 255),
+            (0, 0, 125),
+            (0, 125, 0),
+            (125, 0, 0),
+            (125, 125, 125),
+            (125, 0, 125),
+            (0, 125, 125),
+            (0, 0, 255),
+            (0, 255, 0),
+            (255, 0, 0),
+            (255, 255, 0),
+            (255, 0, 255),
+            (0, 255, 255),
+            (0, 0, 125),
+            (0, 125, 0),
+            (125, 0, 0),
+            (125, 125, 125),
+            (125, 0, 125),
+            (0, 125, 125),
         ]
 
     def proccess_image(self, img, name):  # type: ignore
@@ -47,8 +67,9 @@ class ImageProcessor:
         outputs = np.vstack(outputs)  # type: ignore
 
         coordinates: dict[int | str, int | str] = self.get_coordinates(outputs, 0.2)  # type: ignore
-        self.draw_identified_objects(img, coordinates, name)  # type: ignore
-        return coordinates
+        if self.draw_identified_objects(img, coordinates, name):  # type: ignore
+            return coordinates
+        return 0
 
     def get_coordinates(self, outputs, conf) -> dict[int | str, int | str]:  # type: ignore
 
@@ -112,13 +133,8 @@ class ImageProcessor:
                 color,
                 2,
             )
-            path = os.getcwd()           
-            result_path = f"{path}\\TESTING\\results\\"
 
-            if not os.path.exists(result_path):
-                os.mkdir(result_path)
-
-            cv.imwrite(f"{result_path}\\{name}", img)  # type: ignore
+            return cv.imwrite(f"{self.result_path}\\{name}", img)  # type: ignore
 
         # cv.imshow("window", img)
 

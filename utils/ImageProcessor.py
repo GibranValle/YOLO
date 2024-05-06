@@ -39,6 +39,24 @@ class ImageProcessor:
             (255, 255, 0),
             (255, 0, 255),
             (0, 255, 255),
+            (0, 0, 125),
+            (0, 125, 0),
+            (125, 0, 0),
+            (125, 125, 125),
+            (125, 0, 125),
+            (0, 125, 125),
+            (0, 0, 255),
+            (0, 255, 0),
+            (255, 0, 0),
+            (255, 255, 0),
+            (255, 0, 255),
+            (0, 255, 255),
+            (0, 0, 125),
+            (0, 125, 0),
+            (125, 0, 0),
+            (125, 125, 125),
+            (125, 0, 125),
+            (0, 125, 125),
         ]
 
     def proccess_image(self, img, name):  # type: ignore
@@ -49,8 +67,9 @@ class ImageProcessor:
         outputs = np.vstack(outputs)  # type: ignore
 
         coordinates: dict[int | str, int | str] = self.get_coordinates(outputs, 0.2)  # type: ignore
-        self.draw_identified_objects(img, coordinates, name)  # type: ignore
-        return coordinates
+        if self.draw_identified_objects(img, coordinates, name):  # type: ignore
+            return coordinates
+        return 0
 
     def get_coordinates(self, outputs, conf) -> dict[int | str, int | str]:  # type: ignore
 
@@ -115,7 +134,7 @@ class ImageProcessor:
                 2,
             )
 
-            cv.imwrite(f"{self.result_path}\\{name}", img)  # type: ignore
+        return cv.imwrite(f"{self.result_path}\\{name}", img)  # type: ignore
 
         # cv.imshow("window", img)
 
